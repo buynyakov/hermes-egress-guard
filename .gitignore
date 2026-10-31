@@ -8,3 +8,6 @@ __pycache__/
 .env.*
 *.pem
 *.key
+
+# CI config stays local, not published
+.github/workflows/
