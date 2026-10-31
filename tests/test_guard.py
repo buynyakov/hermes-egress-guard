@@ -1,5 +1,4 @@
 """Unit tests for the detection engine (guard.py). Standard library only."""
-import copy
 import importlib.util
 import sys
 import unittest
