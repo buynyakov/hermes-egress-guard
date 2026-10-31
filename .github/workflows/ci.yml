@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile
+        run: python -m compileall -q __init__.py guard.py tests
+      - name: Validate plugin manifest and default settings
+        run: |
+          python -m pip install pyyaml
+          python - <<'PY'
+          import yaml
+          m = yaml.safe_load(open("plugin.yaml"))
+          assert m.get("name") == "egress-guard", m.get("name")
+          yaml.safe_load(open("settings.default.yaml"))
+          print("manifest ok:", m["name"])
+          PY
+      - name: Install test dependencies
+        run: python -m pip install pytest pyyaml
+      - name: Run tests
+        run: python -m pytest -v
+
+  lint:
+    runs-on: ubuntu-latest
+    # Advisory: reports findings without blocking the build.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Ruff
+        run: |
+          python -m pip install ruff
+          ruff check --select E9,F .

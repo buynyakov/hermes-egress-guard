@@ -1,0 +1,29 @@
+# Default settings for egress-guard.
+#
+# Hermes reads plugin settings from config.yaml under plugins.entries.egress-guard.settings.
+# Every key is optional; an omitted key uses the built-in default shown here. Copy this block
+# (or only the keys you change) into config.yaml, or set one key at a time with
+#   hermes config set plugins.entries.egress-guard.settings.<key> <value>
+#
+# Values are written in JSON flow style, which YAML reads unchanged.
+plugins:
+  entries:
+    egress-guard:
+      settings:
+        enabled: true
+        mode_secret_env: "ask"
+        mode_secret_file: "block"
+        mode_literal_secret: "block"
+        mode_pii: "ask"
+        mode_unknown_host_env: "off"
+        strip_env_keys: []
+        unset_in_terminal: true
+        secret_name_regex: "(?:api[_-]?key|token|secret|passw(?:or)?d|passwd|credential|private[_-]?key|access[_-]?key)"
+        secret_file_regex: "(?:(?<![A-Za-z0-9_])\\.env\\b|auth\\.json|/credentials/|\\.ssh/|\\.netrc|\\.pgpass|\\.npmrc|\\.pypirc|\\.aws/credentials|\\.git-credentials|\\.config/gh/hosts\\.yml|client_secret[\\w.-]*\\.json|id_(?:rsa|ed25519|ecdsa)|\\.pem\\b|-token\\.json)"
+        trusted_hosts: ["localhost", "127.0.0.1", "::1"]
+        host_var_allow: {"api.github.com": ["GH_TOKEN", "GITHUB_TOKEN"], "api.openai.com": ["OPENAI_API_KEY"], "api.anthropic.com": ["ANTHROPIC_API_KEY"], "api.telegram.org": ["TELEGRAM_BOT_TOKEN"], "slack.com": ["SLACK_BOT_TOKEN"]}
+        host_rules: {}
+        pii_terms: []
+        scan_tools_command: ["terminal"]
+        scan_tools_code: ["execute_code"]
+        scan_tools_url: ["web_extract", "browser_navigate"]

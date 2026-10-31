@@ -1,0 +1,30 @@
+name: egress-guard
+version: "1.0.0"
+manifest_version: 2
+api_version: 1
+description: Blocks or asks before agent tool calls send secrets, credential files or personal data to untrusted hosts; strips listed secret env vars from subprocesses.
+author: Buynyakov
+license: MIT
+homepage: https://github.com/buynyakov/hermes-egress-guard
+tags: [security, secrets, dlp, pre-tool-call]
+entrypoint: __init__
+provides_hooks:
+  - pre_tool_call
+config_schema:
+  enabled: {type: bool, default: true, description: "Master switch for scanning and env stripping."}
+  mode_secret_env: {type: str, default: ask, description: "off|log|ask|block for secret env vars sent to an untrusted host."}
+  mode_secret_file: {type: str, default: block, description: "off|log|ask|block for credential files named in a network command."}
+  mode_literal_secret: {type: str, default: block, description: "off|log|ask|block for literal API keys or private keys in a network command."}
+  mode_pii: {type: str, default: ask, description: "off|log|ask|block for pii_terms in a network command."}
+  mode_unknown_host_env: {type: str, default: "off", description: "off|log|ask|block for any env var sent to an untrusted host (audit mode)."}
+  strip_env_keys: {type: list, default: [], description: "Variables removed from subprocess environments and unset in terminal commands."}
+  unset_in_terminal: {type: bool, default: true, description: "Prefix terminal commands with `unset -v <strip_env_keys>`."}
+  secret_name_regex: {type: str, description: "Case-insensitive regex for variable names treated as secret."}
+  secret_file_regex: {type: str, description: "Case-insensitive regex for credential file paths."}
+  trusted_hosts: {type: list, default: [localhost, 127.0.0.1, "::1"], description: "Hosts (and subdomains) that may receive anything."}
+  host_var_allow: {type: dict, description: "Host -> list of the only variables that host may receive."}
+  host_rules: {type: dict, default: {}, description: "Host -> allow|ask|deny verdict that overrides scanning."}
+  pii_terms: {type: list, default: [], description: "Personal literals (email, name, phone) that must not leave."}
+  scan_tools_command: {type: list, default: [terminal], description: "Tools whose `command` argument is scanned."}
+  scan_tools_code: {type: list, default: [execute_code], description: "Tools whose `code` argument is scanned."}
+  scan_tools_url: {type: list, default: [web_extract, browser_navigate], description: "Tools whose arguments are scanned for URLs."}
