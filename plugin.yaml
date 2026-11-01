@@ -7,7 +7,6 @@ author: Buynyakov
 license: MIT
 homepage: https://github.com/buynyakov/hermes-egress-guard
 tags: [security, secrets, dlp, pre-tool-call]
-entrypoint: __init__
 provides_hooks:
   - pre_tool_call
 config_schema:

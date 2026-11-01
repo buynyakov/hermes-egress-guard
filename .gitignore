@@ -9,5 +9,11 @@ __pycache__/
 *.pem
 *.key
 
-# CI config stays local, not published
-.github/workflows/
+# Build / tooling artifacts
+node_modules/
+dist/
+build/
+*.log
+
+# OS cruft
+Thumbs.db

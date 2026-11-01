@@ -63,7 +63,8 @@ class ManifestSchema(unittest.TestCase):
     def test_manifest_name_matches_settings_path(self):
         text = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         self.assertRegex(text, r"(?m)^name: egress-guard$")
-        self.assertRegex(text, r"(?m)^entrypoint: __init__$")
+        # Hermes loads __init__.py by convention; `entrypoint` is not a manifest field.
+        self.assertNotRegex(text, r"(?m)^entrypoint")
         self.assertRegex(text, r"(?m)^provides_hooks:\n  - pre_tool_call$")
 
 
